@@ -7,6 +7,7 @@ This script:
 2. Removes strings that match 'xdata/' and 'xmc/'
 3. Removes the XX/XX/XXXX format date line before the 'directory' string
 4. Prepends 'datapath=home/mobaxterm/serpent/Serpent2xsdata' to the first line
+5. Runs 'perl xsdirconvert.pl xsdir_serpent > xsdata_serpent'
 
 Usage: python xsdir_replace.py input_file
 """
@@ -14,6 +15,7 @@ Usage: python xsdir_replace.py input_file
 import sys
 import os
 import re
+import subprocess
 
 def process_file(input_file):
     # Set output filename to xsdir_serpent (no extension)
@@ -53,6 +55,16 @@ def process_file(input_file):
         file.writelines(processed_lines)
     
     print(f"Processed file saved as: {output_file}")
+    
+    # Run the perl command
+    try:
+        command = "perl xsdirconvert.pl xsdir_serpent > xsdata_serpent"
+        print(f"Running command: {command}")
+        subprocess.run(command, shell=True, check=True)
+        print("Successfully created xsdata_serpent file")
+    except subprocess.CalledProcessError as e:
+        print(f"Error running perl command: {e}")
+        print("Please check if xsdirconvert.pl exists and is executable")
 
 def main():
     if len(sys.argv) != 2:
